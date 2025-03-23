@@ -305,6 +305,7 @@ upsubs() {
 		  if ${yq} 'has("proxy-providers")' "${clash_config}" | grep -q "true"; then
 		    ${yq} -i 'del(.proxy-providers)' "${clash_config}"
 		  fi
+		  ${yq} -i 'del(.proxies)' "${clash_config}"
 
 		  cat "${clash_provide_config}" >> "${clash_config}"
 		fi
@@ -324,7 +325,7 @@ upsubs() {
 
                     ${yq} '.proxy-groups' "${update_file_name}" > "${clash_provide_proxy_groups}"
                     ${yq} -i '{"proxy-groups": .}' "${clash_provide_proxy_groups}"
-                    ${yq} -i 'del(.rules)' "${clash_config}"
+                    ${yq} -i 'del(.proxy-groups)' "${clash_config}"
 
                     cat "${clash_provide_proxy_groups}" >> "${clash_config}"
                   fi
