@@ -312,7 +312,18 @@ upsubs() {
                     cat "${clash_provide_rules}" >> "${clash_config}"
                   fi
                 fi
-                log Info "subscription success"
+                if [ "${custom_proxy_groups_subs}" = "true" ]; then
+                  if ${yq} '.proxy-groups' "${update_file_name}" >/dev/null 2>&1; then
+
+                    ${yq} '.proxy-groups' "${update_file_name}" > "${clash_provide_proxy_groups}"
+                    ${yq} -i '{"proxy-groups": .}' "${clash_provide_proxy_groups}"
+                    ${yq} -i 'del(.rules)' "${clash_config}"
+
+                    cat "${clash_provide_proxy_groups}" >> "${clash_config}"
+                  fi
+                fi
+
+		log Info "subscription success"
                 log Info "Update subscription $(date +"%F %R")"
                 if [ -f "${update_file_name}.bak" ]; then
                   rm "${update_file_name}.bak"
