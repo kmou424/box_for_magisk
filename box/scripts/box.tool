@@ -310,6 +310,16 @@ upsubs() {
 		  cat "${clash_provide_config}" >> "${clash_config}"
 		fi
 
+		if [ "${custom_proxy_groups_subs}" = "true" ]; then
+                  if ${yq} '.proxy-groups' "${update_file_name}" >/dev/null 2>&1; then
+
+                    ${yq} '.proxy-groups' "${update_file_name}" > "${clash_provide_proxy_groups}"
+                    ${yq} -i '{"proxy-groups": .}' "${clash_provide_proxy_groups}"
+                    ${yq} -i 'del(.proxy-groups)' "${clash_config}"
+
+                    cat "${clash_provide_proxy_groups}" >> "${clash_config}"
+                  fi
+                fi
                 if [ "${custom_rules_subs}" = "true" ]; then
                   if ${yq} '.rules' "${update_file_name}" >/dev/null 2>&1; then
 
@@ -318,16 +328,6 @@ upsubs() {
                     ${yq} -i 'del(.rules)' "${clash_config}"
 
                     cat "${clash_provide_rules}" >> "${clash_config}"
-                  fi
-                fi
-                if [ "${custom_proxy_groups_subs}" = "true" ]; then
-                  if ${yq} '.proxy-groups' "${update_file_name}" >/dev/null 2>&1; then
-
-                    ${yq} '.proxy-groups' "${update_file_name}" > "${clash_provide_proxy_groups}"
-                    ${yq} -i '{"proxy-groups": .}' "${clash_provide_proxy_groups}"
-                    ${yq} -i 'del(.proxy-groups)' "${clash_config}"
-
-                    cat "${clash_provide_proxy_groups}" >> "${clash_config}"
                   fi
                 fi
 
