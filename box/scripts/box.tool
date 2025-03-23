@@ -301,6 +301,13 @@ upsubs() {
                 ${yq} '.proxies' "${update_file_name}" >/dev/null 2>&1
                 ${yq} '.proxies' "${update_file_name}" > "${clash_provide_config}"
                 ${yq} -i '{"proxies": .}' "${clash_provide_config}"
+		if [ "${clash_replace_proxies_subs}" = "true" ]; then
+		  if ${yq} 'has("proxy-providers")' "${clash_config}" | grep -q "true"; then
+		    ${yq} -i 'del(.proxy-providers)' "${clash_config}"
+		  fi
+
+		  cat "${clash_provide_config}" >> "${clash_config}"
+		fi
 
                 if [ "${custom_rules_subs}" = "true" ]; then
                   if ${yq} '.rules' "${update_file_name}" >/dev/null 2>&1; then
